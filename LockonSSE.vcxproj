@@ -121,11 +121,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="exports.def" />
+    <None Include="LockonSSE.ini" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\skse64\skse64.vcxproj">
+      <Project>{7028b79c-06e3-4d9a-b38c-1dc3680b1bdb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\skse64_common\skse64_common.vcxproj">
       <Project>{5fd1c08d-db80-480c-a1c6-f0920005cd13}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="Events.h" />
+    <ClInclude Include="Hooks.h" />
+    <ClInclude Include="Scaleform.h" />
+    <ClInclude Include="Address.h" />
+    <ClInclude Include="TES\CameraState.h" />
+    <ClInclude Include="Utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Events.cpp" />
+    <ClCompile Include="Scaleform.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
