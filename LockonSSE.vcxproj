@@ -143,6 +143,7 @@
     <ClInclude Include="Scaleform.h" />
     <ClInclude Include="Address.h" />
     <ClInclude Include="TES\CameraState.h" />
+    <ClInclude Include="TES\EventDispatcherList.h" />
     <ClInclude Include="TES\InputEvents.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

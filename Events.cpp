@@ -1,4 +1,6 @@
+#include "../skse64/GameEvents.h"
 #include "../skse64/GameInput.h"
+#include "../skse64/GameReferences.h"
 
 #include "TES/InputEvents.h"
 #include "lib/EventFunctors.h"
@@ -6,10 +8,70 @@
 #include "Events.h"
 #include "Hooks.h"
 #include "Utils.h"
+#include "TES/EventDispatcherList.h"
 
 ThumbstickInfo g_leftThumbstick = { 0, 0 };
 ThumbstickInfo g_rightThumbstick = { 0, 0 };
 MouseInfo g_mousePosition = { 0, 0 };
+
+class LockOn_HitEventHandler : public BSTEventSink<TESHitEvent>
+{
+public:
+	EventResult ReceiveEvent(TESHitEvent * evn, EventDispatcher<TESHitEvent> * dispatcher) override
+	{
+		if (!evn->caster || evn->caster != *g_thePlayer)
+			return kEvent_Continue;
+
+		TESQuest* quest = GetLockOnQuest();
+
+		if (quest && EventLib::TESQuest_IsRunning(quest))
+		{
+			BGSBaseAlias* baseAlias;
+
+			if (!quest->aliases.GetNthItem(1, baseAlias))
+				return kEvent_Continue;
+
+			auto*  refAlias = dynamic_cast<BGSRefAlias*>(baseAlias);
+
+			TESForm* akSource = nullptr;
+			Projectile* akProjectile = nullptr;
+
+			if (evn->sourceFormID != 0)
+			{
+				akSource = LookupFormByID(evn->sourceFormID);
+				if (akSource != nullptr) {
+					if (akSource->formType != kFormType_Weapon
+						&& akSource->formType != kFormType_Explosion
+						&& akSource->formType != kFormType_Spell
+						&& akSource->formType != kFormType_Ingredient
+						&& akSource->formType != kFormType_Potion
+						&& akSource->formType != kFormType_Enchantment)
+					{
+						akSource = nullptr;
+					}
+				}
+			}
+
+			if (evn->projectileFormID != 0)
+			{
+				akProjectile = dynamic_cast<Projectile*>(LookupFormByID(evn->projectileFormID));
+				if (akProjectile != nullptr && akProjectile->formType != kFormType_Projectile)
+				{
+					akProjectile = nullptr;
+				}
+			}
+
+			const uint64_t handle = EventLib::GetVMHandleForQuest(quest);
+			if (handle)
+			{
+				static BSFixedString eventName = "Lockon_OnPlayerHit";
+				EventLib::EventFunctor3<TESObjectREFR *, TESForm *, Projectile *>(eventName, evn->target, akSource, akProjectile)(handle);
+			}
+		}
+
+		return kEvent_Continue;
+	}
+};
 
 static void OnThumbstickEvent(TES::ThumbstickEvent * evt, TESQuest * quest)
 {
@@ -17,7 +79,7 @@ static void OnThumbstickEvent(TES::ThumbstickEvent * evt, TESQuest * quest)
 	static bool bThumbstickRight = false;
 
 	bool  bTrigger = false;
-	bool  bState = (evt->x != 0 || evt->y != 0);
+	const bool bState = (evt->x != 0 || evt->y != 0);
 
 	if (evt->keyMask == evt->kInputType_LeftThumbstick)
 	{
@@ -63,7 +125,7 @@ static void OnMouseMoveEvent(TES::MouseMoveEvent * evt, TESQuest * quest)
 		return;
 
 	bool  bTrigger = false;
-	bool  bState = (evt->moveX != 0 || evt->moveY != 0);
+	const bool  bState = (evt->moveX != 0 || evt->moveY != 0);
 	_DMESSAGE("MouseMove: %08X %08X %08X", evt->source, evt->moveX, evt->moveY);
 
 	totalX += evt->moveX;
@@ -111,12 +173,12 @@ public:
 		{
 			if (e->eventType == InputEvent::kEventType_Thumbstick)
 			{
-				auto t = dynamic_cast<TES::ThumbstickEvent*>(e);
+				const auto t = dynamic_cast<TES::ThumbstickEvent*>(e);
 				OnThumbstickEvent(t, quest);
 			}
 			else if (e->eventType == InputEvent::kEventType_MouseMove)
 			{
-				auto m = dynamic_cast<TES::MouseMoveEvent*>(e);
+				const auto m = dynamic_cast<TES::MouseMoveEvent*>(e);
 				OnMouseMoveEvent(m, quest);
 			}
 		}
@@ -125,6 +187,7 @@ public:
 	}
 };
 
+LockOn_HitEventHandler g_hitEventHandler;
 Lockon_InputEventHandler g_inputEventHandler;
 
 namespace Events
@@ -136,5 +199,8 @@ namespace Events
 		{
 			inputEventDispatcher->AddEventSink(&g_inputEventHandler);
 		}
+		const auto eventDispatcherList = TES::GetEventDispatcherList();
+		auto hitEventDispatcher = eventDispatcherList->hitDispatcher;
+		hitEventDispatcher.AddEventSink(&g_hitEventHandler);
 	}
 }

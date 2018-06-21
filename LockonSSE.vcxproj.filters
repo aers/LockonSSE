@@ -38,6 +38,9 @@
     <ClInclude Include="lib\EventHelpers.h">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="TES\EventDispatcherList.h">
+      <Filter>TES</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scaleform.cpp" />
