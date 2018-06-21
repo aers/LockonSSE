@@ -4,6 +4,8 @@
 
 namespace TES
 {
+	// there's some errors in this list but I can't be bothered to fix them right now (errors exist in skse)
+	// combatevent and hitevent are correct and that's what we need
 	class EventDispatcherList
 	{
 	public:

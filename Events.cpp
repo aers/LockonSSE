@@ -14,6 +14,73 @@ ThumbstickInfo g_leftThumbstick = { 0, 0 };
 ThumbstickInfo g_rightThumbstick = { 0, 0 };
 MouseInfo g_mousePosition = { 0, 0 };
 
+class LockOn_CombatEventHandler : public BSTEventSink<TESCombatEvent>
+{
+public:
+	EventResult ReceiveEvent(TESCombatEvent* evn, EventDispatcher<TESCombatEvent>* dispatcher) override
+	{
+		if (evn->state != 1)
+			return kEvent_Continue;
+
+		if (evn->target == nullptr || evn->source == nullptr)
+			return kEvent_Continue;
+
+		const auto target = DYNAMIC_CAST(evn->target, TESObjectREFR, Actor);
+		const auto source = DYNAMIC_CAST(evn->source, TESObjectREFR, Actor);
+
+#ifdef _DEBUG
+		const char* casterName = GetActorName(source);
+		const char* targetName = GetActorName(target);
+
+		switch (evn->state)
+		{
+		case 0:
+			_DMESSAGE("[DEBUG] Not in combat:\n  caster: %s", casterName);
+			break;
+		case 1:
+			_DMESSAGE("[DEBUG] In combat:\n  caster: %s\n  target: %s", casterName, targetName);
+			break;
+		case 2:
+			_DMESSAGE("[DEBUG] Searching:\n  caster: %s\n  target: %s", casterName, targetName);
+			break;
+		default:
+			break;
+		}
+#endif
+
+		const auto player = *g_thePlayer;
+
+		if (source == player)
+			return kEvent_Continue;
+
+		Actor * enemy = nullptr;
+
+		if (target == player || IsPlayerTeammate(target))
+			enemy = source;
+		else if (IsPlayerTeammate(source))
+			enemy = target;
+
+		if (enemy)
+		{
+			_DMESSAGE("[DEBUG] enemy");
+
+			auto * quest = GetLockOnQuest();
+			if (quest && EventLib::TESQuest_IsRunning(quest))
+			{
+				const uint64_t handle = EventLib::GetVMHandleForQuest(quest, 1);
+				if (handle)
+				{
+					static BSFixedString eventName("Lockon_OnCombatStart");
+					EventLib::EventFunctor1<Actor *>(eventName, enemy)(handle);
+				}
+			}
+		}
+
+		return kEvent_Continue;
+	}
+};
+
+
 class LockOn_HitEventHandler : public BSTEventSink<TESHitEvent>
 {
 public:
@@ -26,13 +93,6 @@ public:
 
 		if (quest && EventLib::TESQuest_IsRunning(quest))
 		{
-			BGSBaseAlias* baseAlias;
-
-			if (!quest->aliases.GetNthItem(1, baseAlias))
-				return kEvent_Continue;
-
-			auto*  refAlias = dynamic_cast<BGSRefAlias*>(baseAlias);
-
 			TESForm* akSource = nullptr;
 			Projectile* akProjectile = nullptr;
 
@@ -61,10 +121,10 @@ public:
 				}
 			}
 
-			const uint64_t handle = EventLib::GetVMHandleForQuest(quest);
+			const uint64_t handle = EventLib::GetVMHandleForQuest(quest, 1);
 			if (handle)
 			{
-				static BSFixedString eventName = "Lockon_OnPlayerHit";
+				static BSFixedString eventName("Lockon_OnPlayerHit");
 				EventLib::EventFunctor3<TESObjectREFR *, TESForm *, Projectile *>(eventName, evn->target, akSource, akProjectile)(handle);
 			}
 		}

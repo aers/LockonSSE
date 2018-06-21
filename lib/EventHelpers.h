@@ -15,7 +15,7 @@ namespace EventLib
 		return (quest->unk0D8.flags & 1) != 0 && (quest->unk0D8.flags >> 7 & 1) == 0 && quest->unk148 == 0;
 	}
 
-	UInt64 GetVMHandleForQuest(TESQuest* quest)
+	inline UInt64 GetVMHandleForQuest(TESQuest* quest, uint64_t aliasIndex = 0)
 	{
 		_DMESSAGE("[DEBUG] GetVMHandleForQuest(TESQuest ptr 0x%016" PRIXPTR ")", quest);
 
@@ -28,7 +28,7 @@ namespace EventLib
 			_DMESSAGE("[DEBUG] Quest exists and is running");
 
 			BGSBaseAlias* baseAlias = nullptr;
-			if (quest->aliases.GetNthItem(0, baseAlias))
+			if (quest->aliases.GetNthItem(aliasIndex, baseAlias))
 			{
 				const auto refAlias = DYNAMIC_CAST(baseAlias, BGSBaseAlias, BGSRefAlias);
 				if (refAlias)

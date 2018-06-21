@@ -10,6 +10,8 @@
 #include "Config.h"
 #include "Utils.h"
 
+#include <cinttypes>
+
 #define M_PI   3.14159265358979323846264338327950288
 
 void GetAngle(const NiPoint3 &from, const NiPoint3 &to, AngleZX* angle)
@@ -57,9 +59,6 @@ double NormalRelativeAngle(double angle)
 		angle += 2 * M_PI;
 	return angle;
 }
-
-
-
 
 TESQuest* GetLockOnQuest()
 {
@@ -113,20 +112,21 @@ BGSListForm* GetQuestList()
 
 const char* GetActorName(Actor* akActor)
 {
+	_DMESSAGE("GetActorName(Actor ptr 0x%016" PRIXPTR ")", akActor);
+
 	static const char unkName[] = "unknown";
 	const char* result = unkName;
 
 	if (akActor && akActor->formType == kFormType_Character)
 	{
-		auto* actorBase = dynamic_cast<TESActorBase*>(akActor->baseForm);
+		_DMESSAGE("Actor exists and is a character");
+
+		const auto actorBase = dynamic_cast<TESActorBase*>(akActor->baseForm);
 		if (actorBase)
 		{
-			auto* pFullName = DYNAMIC_CAST(actorBase, TESActorBase, TESFullName);
-
+			auto pFullName = dynamic_cast<TESFullName*>(actorBase);
 			if (pFullName)
-			{
-				result = pFullName->name.data;
-			}
+				result = pFullName->GetName();
 		}
 	}
 
