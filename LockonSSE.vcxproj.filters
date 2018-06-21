@@ -4,10 +4,19 @@
     <None Include="exports.def" />
     <None Include="LockonSSE.ini" />
     <None Include="README.md" />
+    <None Include="lib\EventFunctors.inl">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\EventFunctors_Base.inl">
+      <Filter>lib</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TES">
       <UniqueIdentifier>{12fbee39-b3b8-40da-adcb-570952d5e303}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{b4e347fd-ddef-48be-8efd-b1b05d97791b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -20,6 +29,15 @@
     <ClInclude Include="Scaleform.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Events.h" />
+    <ClInclude Include="TES\InputEvents.h">
+      <Filter>TES</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EventFunctors.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EventHelpers.h">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scaleform.cpp" />

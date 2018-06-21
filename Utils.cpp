@@ -337,8 +337,3 @@ bool IsPlayerFollower(Actor* actor)
 {
 	return Actor_IsInFaction(actor, dynamic_cast<TESFaction*>(LookupFormByID(0x05C84E))); // Follower Faction
 }
-
-inline bool TESQuest_IsRunning(TESQuest* quest)
-{
-	return ((quest->unk0D8.flags & 1) != 0 && ((quest->unk0D8.flags >> 7) & 1) == 0 && quest->unk148 == 0);
-}

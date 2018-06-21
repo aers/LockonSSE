@@ -45,5 +45,3 @@ bool IsPlayerFollower(Actor* actor);
 
 double NormalAbsoluteAngle(double angle);
 double NormalRelativeAngle(double angle);
-
-inline bool TESQuest_IsRunning(TESQuest* quest);

@@ -121,6 +121,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="exports.def" />
+    <None Include="lib\EventFunctors.inl" />
+    <None Include="lib\EventFunctors_Base.inl" />
     <None Include="LockonSSE.ini" />
     <None Include="README.md" />
   </ItemGroup>
@@ -136,9 +138,12 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="Hooks.h" />
+    <ClInclude Include="lib\EventFunctors.h" />
+    <ClInclude Include="lib\EventHelpers.h" />
     <ClInclude Include="Scaleform.h" />
     <ClInclude Include="Address.h" />
     <ClInclude Include="TES\CameraState.h" />
+    <ClInclude Include="TES\InputEvents.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
