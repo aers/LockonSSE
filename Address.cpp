@@ -8,3 +8,6 @@ RelocAddr<_Actor_IsInFaction> Actor_IsInFaction(0x005F89B0);
 RelocPtr<TES::TESCameraController> g_TESCameraController(0x01E16A10);
 
 RelocPtr<TES::UnkCellInfo *> g_TESUnkCellInfo(0x01EE5AD0);
+
+// E8 ? ? ? ? EB 48 33 D2 ->
+RelocAddr<_TESQuest_CreateRefHandleByAliasID> TESQuest_CreateRefHandleByAliasID(0x003789C0);

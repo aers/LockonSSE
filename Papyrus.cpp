@@ -2,13 +2,18 @@
 
 #include <algorithm>
 
+#include "lib/EventHelpers.h"
+#include "lib/EventFunctors.h"
 #include "TES/GameCamera.h"
 #include "Address.h"
+#include "Events.h"
+#include "Hooks.h"
 #include "Utils.h"
+
 
 #define M_PI   3.14159265358979323846264338327950288
 
-bool IsGamepadEnabled(StaticFunctionTag * base)
+bool Papyrus_IsGamepadEnabled(StaticFunctionTag * base)
 {
 	return InputEventDispatcher::GetSingleton() && InputEventDispatcher::GetSingleton()->IsGamepadEnabled();
 }
@@ -69,7 +74,7 @@ void Papyrus_LookAtRef(StaticFunctionTag * base, TESObjectREFR* akRef, float wai
 	LookAt(targetPos.x, targetPos.y, targetPos.z, wait);
 }
 
-static TESObjectREFR* Papyrus_GetCrosshairReference(StaticFunctionTag * base)
+TESObjectREFR* Papyrus_GetCrosshairReference(StaticFunctionTag * base)
 {
 	CrosshairRefHandleHolder* crh = CrosshairRefHandleHolder::GetSingleton();
 	UInt32 handle = crh->CrosshairRefHandle();
@@ -83,17 +88,17 @@ static TESObjectREFR* Papyrus_GetCrosshairReference(StaticFunctionTag * base)
 	return akRef;
 }
 
-VMResultArray<Actor*> FindCloseActor(TESQuest * thisPtr, float distance, UInt32 sortOrder)
+VMResultArray<Actor*> Papyrus_FindCloseActor(TESQuest * thisPtr, float distance, UInt32 sortOrder)
 {
 	enum Order {
-		kSortOrder_distance = 0,		// 距離が近い順
-		kSortOrder_crosshair = 1,		// クロスヘアに近い順
-		kSortOrder_zaxis_clock = 2,		// Z軸時計回り
-		kSortOrder_zaxis_rclock = 3,		// Z軸逆時計回り
+		kSortOrder_distance = 0,		// descending order of distance from actor
+		kSortOrder_crosshair = 1,		// descending order of distance from crosshair
+		kSortOrder_zaxis_clock = 2,		// z axis clockwise
+		kSortOrder_zaxis_rclock = 3,	// z axis counterclockwise
 		kSortOrder_invalid = 4
 	};
 
-	double fovThreshold = (double)PlayerCamera::GetSingleton()->worldFOV / 180.0 * M_PI / 2;
+	const double fovThreshold = static_cast<double>(PlayerCamera::GetSingleton()->worldFOV) / 180.0 * M_PI / 2;
 
 	VMResultArray<Actor*> result;
 
@@ -105,7 +110,6 @@ VMResultArray<Actor*> FindCloseActor(TESQuest * thisPtr, float distance, UInt32 
 	std::vector<std::pair<double, Actor*>> vec;
 	vec.reserve(actorHandles->count);
 
-	PlayerCharacter* player = *g_thePlayer;
 	NiPoint3 camPos;
 	GetCameraPos(&camPos);
 
@@ -113,27 +117,27 @@ VMResultArray<Actor*> FindCloseActor(TESQuest * thisPtr, float distance, UInt32 
 	size_t i = 0;
 	while (actorHandles->GetNthItem(i++, handle))
 	{
-		TESObjectREFR* ref = NULL;
+		TESObjectREFR* ref = nullptr;
 		if (handle != *g_invalidRefHandle)
 			LookupREFRByHandle(&handle, &ref);
 
 		if (ref && ref->formType == kFormType_Character)
 		{
-			Actor* actor = (Actor*)ref;
+			auto actor = dynamic_cast<Actor*>(ref);
 			NiPoint3 pos;
 			GetTargetPos(actor, &pos);
-			double dx = pos.x - camPos.x;
-			double dy = pos.y - camPos.y;
-			double dz = pos.z - camPos.z;
-			double dd = sqrt(dx*dx + dy * dy + dz * dz);
+			const double dx = pos.x - camPos.x;
+			const double dy = pos.y - camPos.y;
+			const double dz = pos.z - camPos.z;
+			const double dd = sqrt(dx*dx + dy * dy + dz * dz);
 
 			if (distance <= 0 || dd <= distance)
 			{
 				double point;
 				NiPoint3 cameraAngle;
 				GetCameraAngle(&cameraAngle);
-				double angleZ = NormalRelativeAngle(atan2(dx, dy) - cameraAngle.z);
-				double angleX = NormalRelativeAngle(atan2(-dz, sqrt(dx*dx + dy * dy)) - cameraAngle.x);
+				const double angleZ = NormalRelativeAngle(atan2(dx, dy) - cameraAngle.z);
+				const double angleX = NormalRelativeAngle(atan2(-dz, sqrt(dx*dx + dy * dy)) - cameraAngle.x);
 
 				if (abs(angleZ) < fovThreshold)
 				{
@@ -158,7 +162,7 @@ VMResultArray<Actor*> FindCloseActor(TESQuest * thisPtr, float distance, UInt32 
 
 					if (point >= 0)
 					{
-						vec.push_back(std::make_pair(point, actor));
+						vec.emplace_back(point, actor);
 					}
 				}
 			}
@@ -171,7 +175,6 @@ VMResultArray<Actor*> FindCloseActor(TESQuest * thisPtr, float distance, UInt32 
 	if (sortOrder < kSortOrder_invalid)
 		std::sort(vec.begin(), vec.end());
 
-	// Papyrusに返す配列を確保
 	for (i = 0; i < vec.size(); i++)
 	{
 		result.push_back(vec[i].second);
@@ -180,11 +183,158 @@ VMResultArray<Actor*> FindCloseActor(TESQuest * thisPtr, float distance, UInt32 
 	return result;
 }
 
+void SendLockonEvent(Actor * actor, const char * eventName)
+{
+	BGSListForm * list = GetQuestList();
+
+	if (list && list->forms.count)
+	{
+		for (UInt32 i = 0; i < list->forms.count; i++)
+		{
+			if (list->forms[i] && list->forms[i]->formType == kFormType_Quest)
+			{
+				const auto quest = dynamic_cast<TESQuest *>(list->forms[i]);
+				const uint64_t handle = EventLib::GetVMHandleForQuest(quest);
+				if (handle)
+				{
+					BSFixedString evStr(eventName);
+					EventLib::EventFunctor1<Actor *>(evStr, actor)(handle);
+				}
+			}
+		}
+	}
+}
+
+void Papyrus_SendLockonStartEvent(TESQuest * thisPtr)
+{
+	if (thisPtr && EventLib::TESQuest_IsRunning(thisPtr))
+	{
+		UInt32 handle = *g_invalidRefHandle;
+		TESObjectREFR* refTarget = nullptr;
+
+		TESQuest_CreateRefHandleByAliasID(thisPtr, &handle, 0);
+
+		if (handle != *g_invalidRefHandle)
+			LookupREFRByHandle(&handle, &refTarget);
+
+		if (refTarget && refTarget->formType == kFormType_Character)
+		{
+			SendLockonEvent(dynamic_cast<Actor*>(refTarget), "OnLock");
+		}
+	}
+}
+
+void Papyrus_SendLockonStopEvent(TESQuest * thisPtr)
+{
+	if (thisPtr && EventLib::TESQuest_IsRunning(thisPtr))
+	{
+		UInt32 handle = *g_invalidRefHandle;
+		TESObjectREFR* refTarget = nullptr;
+
+		TESQuest_CreateRefHandleByAliasID(thisPtr, &handle, 0);
+
+		if (handle != *g_invalidRefHandle)
+			LookupREFRByHandle(&handle, &refTarget);
+
+		if (refTarget && refTarget->formType == kFormType_Character)
+		{
+			SendLockonEvent(dynamic_cast<Actor*>(refTarget), "OnUnlock");
+		}
+	}
+}
+
+void Papyrus_SetCameraSpeed(StaticFunctionTag * base, float speed)
+{
+	g_cameraSpeed = speed;
+}
+
+float Papyrus_GetThumbstickAxisX(StaticFunctionTag * base, UInt32 type)
+{
+	if (type == 0x0B)
+		return g_leftThumbstick.x;
+	else if (type == 0x0C)
+		return g_rightThumbstick.x;
+
+	return 0;
+}
+
+float Papyrus_GetThumbstickAxisY(StaticFunctionTag * base, UInt32 type)
+{
+	if (type == 0x0B)
+		return g_leftThumbstick.y;
+	else if (type == 0x0C)
+		return g_rightThumbstick.y;
+
+	return 0;
+}
+
+void Papyrus_ResetMouse(StaticFunctionTag * base)
+{
+	g_mousePosition.x = 0;
+	g_mousePosition.y = 0;
+}
+
+SInt32 Papyrus_GetMouseX(StaticFunctionTag * base)
+{
+	return g_mousePosition.x;
+}
+
+SInt32 Papyrus_GetMouseY(StaticFunctionTag * base)
+{
+	return g_mousePosition.y;
+}
 
 namespace Papyrus
 {
-	void Init()
+	void Init(VMClassRegistry* registry)
 	{
-		g_TESCameraController->Rotate(1, 1, 1, 1, 1, 1);
+		registry->RegisterFunction(
+			new NativeFunction0<StaticFunctionTag, bool>("IsGamepadEnabled", "LockOn_Main", Papyrus_IsGamepadEnabled, registry));
+		registry->SetFunctionFlags("LockOn_Main", "IsGamepadEnabled", VMClassRegistry::kFunctionFlag_NoWait);
+
+		registry->RegisterFunction(
+			new NativeFunction3<StaticFunctionTag, void, float, float, float>("SetPlayerAngle", "LockOn_Main", Papyrus_SetPlayerAngle, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction4<StaticFunctionTag, void, float, float, float, float>("LookAt", "LockOn_Main", Papyrus_LookAt, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction2<StaticFunctionTag, void, TESObjectREFR*, float>("LookAtRef", "LockOn_Main", Papyrus_LookAtRef, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction0<StaticFunctionTag, TESObjectREFR*>("GetCrosshairReference", "LockOn_Main", Papyrus_GetCrosshairReference, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction2<TESQuest, VMResultArray<Actor *>, float, UInt32>("FindCloseActor", "LockOn_Main", Papyrus_FindCloseActor, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction0<TESQuest, void>("SendLockonStartEvent", "LockOn_Main", Papyrus_SendLockonStartEvent, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction0<TESQuest, void>("SendLockonStopEvent", "LockOn_Main", Papyrus_SendLockonStopEvent, registry));
+
+		registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, void, float>("SetCameraSpeed", "LockOn_Main", Papyrus_SetCameraSpeed, registry));
+		registry->SetFunctionFlags("LockOn_Main", "SetCameraSpeed", VMClassRegistry::kFunctionFlag_NoWait);
+
+		registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, float, UInt32>("GetThumbstickAxisX", "LockOn_Main", Papyrus_GetThumbstickAxisX, registry));
+		registry->SetFunctionFlags("LockOn_Main", "GetThumbstickAxisX", VMClassRegistry::kFunctionFlag_NoWait);
+
+		registry->RegisterFunction(
+			new NativeFunction1<StaticFunctionTag, float, UInt32>("GetThumbstickAxisY", "LockOn_Main", Papyrus_GetThumbstickAxisY, registry));
+		registry->SetFunctionFlags("LockOn_Main", "SetThumbstickAxisY", VMClassRegistry::kFunctionFlag_NoWait);
+
+		registry->RegisterFunction(
+			new NativeFunction0<StaticFunctionTag, void>("ResetMouse", "LockOn_Main", Papyrus_ResetMouse, registry));
+		registry->SetFunctionFlags("LockOn_Main", "ResetMouse", VMClassRegistry::kFunctionFlag_NoWait);
+
+		registry->RegisterFunction(
+			new NativeFunction0<StaticFunctionTag, SInt32>("GetMouseX", "LockOn_Main", Papyrus_GetMouseX, registry));
+		registry->SetFunctionFlags("LockOn_Main", "GetMouseX", VMClassRegistry::kFunctionFlag_NoWait);
+
+		registry->RegisterFunction(
+			new NativeFunction0<StaticFunctionTag, SInt32>("GetMouseY", "LockOn_Main", Papyrus_GetMouseY, registry));
+		registry->SetFunctionFlags("LockOn_Main", "GetMouseY", VMClassRegistry::kFunctionFlag_NoWait);
 	}
 }
