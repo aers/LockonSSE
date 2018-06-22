@@ -10,9 +10,6 @@
 #include "Hooks.h"
 #include "Utils.h"
 
-
-#define M_PI   3.14159265358979323846264338327950288
-
 bool Papyrus_IsGamepadEnabled(StaticFunctionTag * base)
 {
 	return InputEventDispatcher::GetSingleton() && InputEventDispatcher::GetSingleton()->IsGamepadEnabled();

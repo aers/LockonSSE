@@ -12,8 +12,6 @@
 
 #include <cinttypes>
 
-#define M_PI   3.14159265358979323846264338327950288
-
 void GetAngle(const NiPoint3 &from, const NiPoint3 &to, AngleZX* angle)
 {
 	const auto x = to.x - from.x;

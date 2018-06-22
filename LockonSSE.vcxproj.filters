@@ -55,5 +55,6 @@
       <Filter>TES</Filter>
     </ClCompile>
     <ClCompile Include="Address.cpp" />
+    <ClCompile Include="Hooks.cpp" />
   </ItemGroup>
 </Project>

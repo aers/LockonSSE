@@ -11,3 +11,6 @@ RelocPtr<TES::UnkCellInfo *> g_TESUnkCellInfo(0x01EE5AD0);
 
 // E8 ? ? ? ? EB 48 33 D2 ->
 RelocAddr<_TESQuest_CreateRefHandleByAliasID> TESQuest_CreateRefHandleByAliasID(0x003789C0);
+
+// ini setting bInvertYValues:Controls
+RelocPtr<bool> ini_bInvertYValues(0x01E17770);

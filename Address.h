@@ -17,3 +17,5 @@ extern RelocPtr<TES::UnkCellInfo *> g_TESUnkCellInfo;
 
 typedef uint32_t*(*_TESQuest_CreateRefHandleByAliasID)(TESQuest * thisPtr, UInt32 * handle, UInt32 aliasID);
 extern RelocAddr<_TESQuest_CreateRefHandleByAliasID> TESQuest_CreateRefHandleByAliasID;
+
+extern RelocPtr<bool> ini_bInvertYValues;
