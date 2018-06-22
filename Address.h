@@ -19,3 +19,14 @@ typedef uint32_t*(*_TESQuest_CreateRefHandleByAliasID)(TESQuest * thisPtr, UInt3
 extern RelocAddr<_TESQuest_CreateRefHandleByAliasID> TESQuest_CreateRefHandleByAliasID;
 
 extern RelocPtr<bool> ini_bInvertYValues;
+
+typedef void(*_PlayerCharacter_SetAngleZ)(PlayerCharacter * thisPtr, float angle);
+extern RelocAddr<_PlayerCharacter_SetAngleZ> PlayerCharacter_SetAngleZ;
+
+typedef void(*_PlayerCharacter_SetAngleX)(PlayerCharacter * thisPtr, float angle);
+extern RelocAddr<_PlayerCharacter_SetAngleX> PlayerCharacter_SetAngleX;
+
+typedef float(*_PlayerCharacter_UnkA4)(PlayerCharacter * thisPtr, UInt32 arg1);
+extern RelocAddr<_PlayerCharacter_UnkA4> PlayerCharacter_UnkA4;
+
+extern RelocAddr<uintptr_t> OnCameraMoveHook;

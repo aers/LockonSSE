@@ -86,4 +86,58 @@ namespace TES
 		uint8_t					padE3[5];					// E3
 	};
 	STATIC_ASSERT(sizeof(ThirdPersonState) == 0xE8);
+
+	class PlayerCamera : public TESCamera
+	{
+	public:
+		PlayerCamera();
+		virtual ~PlayerCamera();
+
+		static PlayerCamera *	GetSingleton(void)
+		{
+			// C8178119312C87C7B80275C5FECC5A3BF755A64B+B9
+			static RelocPtr<PlayerCamera*> g_playerCamera(0x02EEC9B8);
+			return *g_playerCamera;
+		}
+
+		enum
+		{
+			kCameraState_FirstPerson = 0,
+			kCameraState_AutoVanity,
+			kCameraState_VATS,
+			kCameraState_Free,
+			kCameraState_IronSights,
+			kCameraState_Furniture,
+			kCameraState_Transition,
+			kCameraState_TweenMenu,
+			kCameraState_ThirdPerson1,
+			kCameraState_ThirdPerson2,
+			kCameraState_Horse,
+			kCameraState_Bleedout,
+			kCameraState_Dragon,
+			kNumCameraStates
+		};
+
+		UInt8	unk38[0xB8 - 0x38];							// 028
+		TESCameraState * cameraStates[kNumCameraStates];	// 0B8
+		UInt64	unk120;										// 120
+		UInt64	unk128;										// 128
+		UInt64	unk130;										// 130
+		UInt32	unk138;										// 138
+		float	worldFOV;									// 13C
+		float	firstPersonFOV;								// 140
+		UInt32	unk144[(0x154 - 0x144) >> 2];				// 144
+		float   unk154;										// 154
+		UInt32	unk158[(0x160 - 0x158) >> 2];				// 158
+		bool	allowTogglePov;								// 160
+		UInt8	unk161;										// 161
+		UInt8	unk162;										// 162 - init'd to 1
+		UInt8	unk163;										// 163
+		UInt8	unk164;										// 164
+		UInt8	unk165;										// 165
+		UInt8	pad166[2];									// 166
+
+		MEMBER_FN_PREFIX(PlayerCamera);
+		DEFINE_MEMBER_FN(UpdateThirdPerson, void, 0x0084DAE0, bool weaponDrawn);
+	};
 }
