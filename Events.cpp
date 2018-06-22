@@ -14,7 +14,7 @@ ThumbstickInfo g_leftThumbstick = { 0, 0 };
 ThumbstickInfo g_rightThumbstick = { 0, 0 };
 MouseInfo g_mousePosition = { 0, 0 };
 
-class LockOn_CombatEventHandler : public BSTEventSink<TESCombatEvent>
+class Lockon_CombatEventHandler : public BSTEventSink<TESCombatEvent>
 {
 public:
 	EventResult ReceiveEvent(TESCombatEvent* evn, EventDispatcher<TESCombatEvent>* dispatcher) override
@@ -81,7 +81,7 @@ public:
 };
 
 
-class LockOn_HitEventHandler : public BSTEventSink<TESHitEvent>
+class Lockon_HitEventHandler : public BSTEventSink<TESHitEvent>
 {
 public:
 	EventResult ReceiveEvent(TESHitEvent * evn, EventDispatcher<TESHitEvent> * dispatcher) override
@@ -247,7 +247,8 @@ public:
 	}
 };
 
-LockOn_HitEventHandler g_hitEventHandler;
+Lockon_CombatEventHandler g_combatEventHandler;
+Lockon_HitEventHandler g_hitEventHandler;
 Lockon_InputEventHandler g_inputEventHandler;
 
 namespace Events
@@ -260,7 +261,7 @@ namespace Events
 			inputEventDispatcher->AddEventSink(&g_inputEventHandler);
 		}
 		const auto eventDispatcherList = TES::GetEventDispatcherList();
-		auto hitEventDispatcher = eventDispatcherList->hitDispatcher;
-		hitEventDispatcher.AddEventSink(&g_hitEventHandler);
+		eventDispatcherList->hitDispatcher.AddEventSink(&g_hitEventHandler);
+		eventDispatcherList->combatDispatcher.AddEventSink(&g_combatEventHandler);
 	}
 }

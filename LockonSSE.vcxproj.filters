@@ -20,9 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TES\CameraState.h">
-      <Filter>TES</Filter>
-    </ClInclude>
     <ClInclude Include="Address.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Hooks.h" />
@@ -41,10 +38,22 @@
     <ClInclude Include="TES\EventDispatcherList.h">
       <Filter>TES</Filter>
     </ClInclude>
+    <ClInclude Include="TES\GameCamera.h">
+      <Filter>TES</Filter>
+    </ClInclude>
+    <ClInclude Include="TES\UnkCellInfo.h">
+      <Filter>TES</Filter>
+    </ClInclude>
+    <ClInclude Include="Papyrus.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scaleform.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Events.cpp" />
+    <ClCompile Include="Papyrus.cpp" />
+    <ClCompile Include="TES\TESCameraController.cpp">
+      <Filter>TES</Filter>
+    </ClCompile>
+    <ClCompile Include="Address.cpp" />
   </ItemGroup>
 </Project>

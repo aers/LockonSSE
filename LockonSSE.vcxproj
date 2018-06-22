@@ -142,14 +142,19 @@
     <ClInclude Include="lib\EventHelpers.h" />
     <ClInclude Include="Scaleform.h" />
     <ClInclude Include="Address.h" />
-    <ClInclude Include="TES\CameraState.h" />
+    <ClInclude Include="TES\GameCamera.h" />
     <ClInclude Include="TES\EventDispatcherList.h" />
     <ClInclude Include="TES\InputEvents.h" />
+    <ClInclude Include="Papyrus.h" />
+    <ClInclude Include="TES\UnkCellInfo.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Address.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="Scaleform.cpp" />
+    <ClCompile Include="Papyrus.cpp" />
+    <ClCompile Include="TES\TESCameraController.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

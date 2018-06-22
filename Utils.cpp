@@ -5,7 +5,7 @@
 
 #include "../skse64/NiNodes.h"
 
-#include "TES/CameraState.h"
+#include "TES/GameCamera.h"
 #include "Address.h"
 #include "Config.h"
 #include "Utils.h"

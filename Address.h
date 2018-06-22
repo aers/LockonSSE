@@ -4,10 +4,12 @@
 
 #include "../skse64/GameReferences.h"
 
-// Skyrim SE 1.5.39
+#include "TES/GameCamera.h"
+#include "TES/UnkCellInfo.h"
 
-// Utils.cpp
-
-// ??_7Actor@@6B@ + 0x7C8 (vtbl F9)
 typedef bool(*_Actor_IsInFaction)(Actor * thisPtr, TESFaction * faction);
-RelocAddr<_Actor_IsInFaction> Actor_IsInFaction(0x005F89B0);
+extern RelocAddr<_Actor_IsInFaction> Actor_IsInFaction;
+
+extern RelocPtr<TES::TESCameraController> g_TESCameraController;
+
+extern RelocPtr<TES::UnkCellInfo *> g_TESUnkCellInfo;

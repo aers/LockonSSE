@@ -6,6 +6,25 @@
 
 namespace TES
 {
+	// 1.5.39 ptr 1E16A10
+	class TESCameraController
+	{
+	public:
+		TESCameraController() {}
+
+		UInt32 unk00;
+		float  startRotZ; // 04
+		float  startRotX; // 08
+		float  endRotZ;   // 0C
+		float  endRotX;   // 10
+		float  unk14;     // 14
+		float  unk18;     // 18
+		UInt8  unk1C;     // 1C
+		UInt8  pad1D[3];  // 1D
+
+		void Rotate(float startRotZ, float startRotX, float endRotZ, float endRotX, float fWait, float arg2);
+	};
+
 	// 90
 	class FirstPersonState : public TESCameraState
 	{
