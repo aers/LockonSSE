@@ -23,6 +23,20 @@ std::string pluginName;
 uint32_t lockonQuestFormID;
 uint32_t questListFormID;
 
+void SKSEMessageHandler(SKSEMessagingInterface::Message * message)
+{
+	switch (message->type)
+	{
+	case SKSEMessagingInterface::kMessage_DataLoaded:
+	{
+		Events::Init();
+	}
+	break;
+	default:
+		break;
+	}
+}
+
 extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface * skse, PluginInfo * info)
 	{
@@ -89,15 +103,17 @@ extern "C" {
 		lockonQuestFormID = 0x000D62;
 		questListFormID = 0x000D64;
 
+		if (g_messaging)
+			g_messaging->RegisterListener(g_pluginHandle, "SKSE", SKSEMessageHandler);
+
 		if (g_scaleform)
 		{
-			g_scaleform->Register("lockon", Scaleform::RegisterCallback);
+		 	g_scaleform->Register("lockon", Scaleform::RegisterCallback);
 		}
 		if (g_papyrus)
 		{
 			g_papyrus->Register(Papyrus::Init);
 		}
-		Events::Init();
 		Hooks::Init();
 
 		return true;
