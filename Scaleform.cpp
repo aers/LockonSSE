@@ -35,6 +35,7 @@ namespace Scaleform
 {
 	bool RegisterCallback(GFxMovieView * view, GFxValue * root)
 	{
+		_MESSAGE("Initializing scaleform");
 		RegisterFunction <SKSEScaleform_RequestTargetInfo>(root, view, "RequestTargetInfo");
 		return true;
 	}

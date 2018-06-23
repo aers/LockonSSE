@@ -285,6 +285,7 @@ namespace Papyrus
 {
 	bool Init(VMClassRegistry* registry)
 	{
+		_MESSAGE("Initializing papyrus");
 		registry->RegisterFunction(
 			new NativeFunction0<StaticFunctionTag, bool>("IsGamepadEnabled", "LockOn_Main", Papyrus_IsGamepadEnabled, registry));
 		registry->SetFunctionFlags("LockOn_Main", "IsGamepadEnabled", VMClassRegistry::kFunctionFlag_NoWait);
@@ -320,7 +321,7 @@ namespace Papyrus
 
 		registry->RegisterFunction(
 			new NativeFunction1<StaticFunctionTag, float, UInt32>("GetThumbstickAxisY", "LockOn_Main", Papyrus_GetThumbstickAxisY, registry));
-		registry->SetFunctionFlags("LockOn_Main", "SetThumbstickAxisY", VMClassRegistry::kFunctionFlag_NoWait);
+		registry->SetFunctionFlags("LockOn_Main", "GetThumbstickAxisY", VMClassRegistry::kFunctionFlag_NoWait);
 
 		registry->RegisterFunction(
 			new NativeFunction0<StaticFunctionTag, void>("ResetMouse", "LockOn_Main", Papyrus_ResetMouse, registry));

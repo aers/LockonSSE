@@ -255,6 +255,7 @@ namespace Events
 {
 	void Init()
 	{
+		_MESSAGE("Initializing events");
 		auto * inputEventDispatcher = InputEventDispatcher::GetSingleton();
 		if (inputEventDispatcher)
 		{

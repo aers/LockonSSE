@@ -233,6 +233,7 @@ namespace Hooks
 {
 	void Init()
 	{
+		_MESSAGE("Initializing hooks");
 		g_branchTrampoline.Write5Call(OnCameraMoveHook.GetUIntPtr(), GetFnAddr(OnCameraMove));
 	}
 }

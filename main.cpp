@@ -23,30 +23,6 @@ std::string pluginName;
 uint32_t lockonQuestFormID;
 uint32_t questListFormID;
 
-void SKSEMessageHandler(SKSEMessagingInterface::Message * message)
-{
-	switch (message->type)
-	{
-	case SKSEMessagingInterface::kMessage_DataLoaded:
-	{
-		DataHandler* dhnd = DataHandler::GetSingleton();
-		if (dhnd->LookupLoadedModByName(pluginName.c_str()) != nullptr)
-		{
-			if (g_papyrus)
-				g_papyrus->Register(Papyrus::Init);
-			Events::Init();
-		}
-		else
-		{
-			_MESSAGE("warning: %s is not active.", pluginName.c_str());
-		}
-	}
-	break;
-	default:
-		break;
-	}
-}
-
 extern "C" {
 	bool SKSEPlugin_Query(const SKSEInterface * skse, PluginInfo * info)
 	{
@@ -117,6 +93,11 @@ extern "C" {
 		{
 			g_scaleform->Register("lockon", Scaleform::RegisterCallback);
 		}
+		if (g_papyrus)
+		{
+			g_papyrus->Register(Papyrus::Init);
+		}
+		Events::Init();
 		Hooks::Init();
 
 		return true;
