@@ -118,7 +118,7 @@ static void RotateCamera(AngleZX* angle)
 		// 納刀時？
 		if (IsCameraThirdPerson())
 		{
-			const auto tps = dynamic_cast<TES::ThirdPersonState*>(camera->cameraState);
+			const auto tps = reinterpret_cast<TES::ThirdPersonState*>(camera->cameraState);
 			tps->diffRotZ = 0.0;
 			tps->diffRotX = 0.0;
 		}
@@ -130,7 +130,7 @@ static void RotateCamera(AngleZX* angle)
 		// 抜刀時？
 		if (IsCameraFirstPerson())
 		{
-			const auto fps = dynamic_cast<TES::FirstPersonState*>(camera->cameraState);
+			const auto fps = reinterpret_cast<TES::FirstPersonState*>(camera->cameraState);
 			angleZ -= PlayerCharacter_UnkA4(player, 0);
 
 			fps->unk68[0] = angleZ;
@@ -138,7 +138,7 @@ static void RotateCamera(AngleZX* angle)
 		}
 		else if (IsCameraThirdPerson())
 		{
-			const auto tps = dynamic_cast<TES::ThirdPersonState*>(camera->cameraState);
+			const auto tps = reinterpret_cast<TES::ThirdPersonState*>(camera->cameraState);
 			angleZ -= camera->unk154;
 
 			tps->diffRotZ = angleZ;
@@ -212,7 +212,7 @@ static void OnCameraMove(uintptr_t * unk)
 		g_targetPosX = x / distance * fov * 800.0 / screenWidth * screenHeight;
 		g_targetPosY = y / distance * fov * 480.0;
 		g_targetDist = targetAngle.distance;
-		const auto actorBase = dynamic_cast<TESActorBase*>(refTarget->baseForm);
+		const auto actorBase = DYNAMIC_CAST(refTarget->baseForm, TESForm, TESActorBase);
 		g_targetName = "";
 		if (actorBase)
 		{
@@ -233,6 +233,6 @@ namespace Hooks
 {
 	void Init()
 	{
-		g_localTrampoline.Write5Call(OnCameraMoveHook.GetUIntPtr(), GetFnAddr(OnCameraMove));
+		g_branchTrampoline.Write5Call(OnCameraMoveHook.GetUIntPtr(), GetFnAddr(OnCameraMove));
 	}
 }

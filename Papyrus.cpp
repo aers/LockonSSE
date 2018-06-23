@@ -120,7 +120,7 @@ VMResultArray<Actor*> Papyrus_FindCloseActor(TESQuest * thisPtr, float distance,
 
 		if (ref && ref->formType == kFormType_Character)
 		{
-			auto actor = dynamic_cast<Actor*>(ref);
+			auto actor = DYNAMIC_CAST(ref, TESObjectREFR, Actor);
 			NiPoint3 pos;
 			GetTargetPos(actor, &pos);
 			const double dx = pos.x - camPos.x;
@@ -190,7 +190,7 @@ void SendLockonEvent(Actor * actor, const char * eventName)
 		{
 			if (list->forms[i] && list->forms[i]->formType == kFormType_Quest)
 			{
-				const auto quest = dynamic_cast<TESQuest *>(list->forms[i]);
+				const auto quest = DYNAMIC_CAST(list->forms[i], TESForm, TESQuest);
 				const uint64_t handle = EventLib::GetVMHandleForQuest(quest);
 				if (handle)
 				{
@@ -216,7 +216,7 @@ void Papyrus_SendLockonStartEvent(TESQuest * thisPtr)
 
 		if (refTarget && refTarget->formType == kFormType_Character)
 		{
-			SendLockonEvent(dynamic_cast<Actor*>(refTarget), "OnLock");
+			SendLockonEvent(DYNAMIC_CAST(refTarget, TESObjectREFR, Actor), "OnLock");
 		}
 	}
 }
@@ -235,7 +235,7 @@ void Papyrus_SendLockonStopEvent(TESQuest * thisPtr)
 
 		if (refTarget && refTarget->formType == kFormType_Character)
 		{
-			SendLockonEvent(dynamic_cast<Actor*>(refTarget), "OnUnlock");
+			SendLockonEvent(DYNAMIC_CAST(refTarget, TESObjectREFR, Actor), "OnUnlock");
 		}
 	}
 }
@@ -283,7 +283,7 @@ SInt32 Papyrus_GetMouseY(StaticFunctionTag * base)
 
 namespace Papyrus
 {
-	void Init(VMClassRegistry* registry)
+	bool Init(VMClassRegistry* registry)
 	{
 		registry->RegisterFunction(
 			new NativeFunction0<StaticFunctionTag, bool>("IsGamepadEnabled", "LockOn_Main", Papyrus_IsGamepadEnabled, registry));
@@ -333,5 +333,7 @@ namespace Papyrus
 		registry->RegisterFunction(
 			new NativeFunction0<StaticFunctionTag, SInt32>("GetMouseY", "LockOn_Main", Papyrus_GetMouseY, registry));
 		registry->SetFunctionFlags("LockOn_Main", "GetMouseY", VMClassRegistry::kFunctionFlag_NoWait);
+
+		return true;
 	}
 }

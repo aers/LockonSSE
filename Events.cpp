@@ -114,7 +114,7 @@ public:
 
 			if (evn->projectileFormID != 0)
 			{
-				akProjectile = dynamic_cast<Projectile*>(LookupFormByID(evn->projectileFormID));
+				akProjectile = DYNAMIC_CAST(LookupFormByID(evn->projectileFormID), TESForm, Projectile);
 				if (akProjectile != nullptr && akProjectile->formType != kFormType_Projectile)
 				{
 					akProjectile = nullptr;
@@ -170,7 +170,7 @@ static void OnThumbstickEvent(TES::ThumbstickEvent * evt, TESQuest * quest)
 		if (handle)
 		{
 			static BSFixedString eventName = "Lockon_OnThumbstick";
-			EventLib::EventFunctor3<uint32_t, float, float>(eventName, evt->keyMask, evt->x, evt->y)(handle);
+			EventLib::EventFunctor3<UInt32, float, float>(eventName, evt->keyMask, evt->x, evt->y)(handle);
 		}
 	}
 }
@@ -214,7 +214,7 @@ static void OnMouseMoveEvent(TES::MouseMoveEvent * evt, TESQuest * quest)
 		if (handle)
 		{
 			static BSFixedString eventName("Lockon_OnMouse");
-			EventLib::EventFunctor2<int32_t, int32_t>(eventName, totalX, totalY)(handle);
+			EventLib::EventFunctor2<SInt32, SInt32>(eventName, totalX, totalY)(handle);
 		}
 	}
 }
@@ -233,12 +233,12 @@ public:
 		{
 			if (e->eventType == InputEvent::kEventType_Thumbstick)
 			{
-				const auto t = dynamic_cast<TES::ThumbstickEvent*>(e);
+				const auto t = reinterpret_cast<TES::ThumbstickEvent*>(e);
 				OnThumbstickEvent(t, quest);
 			}
 			else if (e->eventType == InputEvent::kEventType_MouseMove)
 			{
-				const auto m = dynamic_cast<TES::MouseMoveEvent*>(e);
+				const auto m = reinterpret_cast<TES::MouseMoveEvent*>(e);
 				OnMouseMoveEvent(m, quest);
 			}
 		}

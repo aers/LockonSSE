@@ -66,16 +66,16 @@ TESQuest* GetLockOnQuest()
 	if (formID == 0)
 	{
 		DataHandler* dhdl = DataHandler::GetSingleton();
-		const uint32_t idx = dhdl->GetLoadedModIndex(Config::pluginName.c_str());
+		const uint32_t idx = dhdl->GetLoadedModIndex(pluginName.c_str());
 		if (idx != 0xFF)
 		{
-			formID = (idx << 24) | Config::lockonQuestFormID;
+			formID = (idx << 24) | lockonQuestFormID;
 		}
 	}
 
 	if (formID)
 	{
-		quest = dynamic_cast<TESQuest*>(LookupFormByID(formID));
+		quest = DYNAMIC_CAST(LookupFormByID(formID), TESForm, TESQuest);
 	}
 
 	return quest;
@@ -91,16 +91,16 @@ BGSListForm* GetQuestList()
 	if (formIDQuestList == 0)
 	{
 		DataHandler* dhdl = DataHandler::GetSingleton();
-		const uint32_t idx = dhdl->GetLoadedModIndex(Config::pluginName.c_str());
+		const uint32_t idx = dhdl->GetLoadedModIndex(pluginName.c_str());
 		if (idx != 0xFF)
 		{
-			formIDQuestList = (idx << 24) | Config::questListFormID;
+			formIDQuestList = (idx << 24) | questListFormID;
 		}
 	}
 
 	if (formIDQuestList)
 	{
-		formList = dynamic_cast<BGSListForm*>(LookupFormByID(formIDQuestList));
+		formList = DYNAMIC_CAST(LookupFormByID(formIDQuestList), TESForm, BGSListForm);
 	}
 
 	return formList;
@@ -119,10 +119,10 @@ const char* GetActorName(Actor* akActor)
 	{
 		_DMESSAGE("Actor exists and is a character");
 
-		const auto actorBase = dynamic_cast<TESActorBase*>(akActor->baseForm);
+		const auto actorBase = DYNAMIC_CAST(akActor->baseForm, TESForm, TESActorBase);
 		if (actorBase)
 		{
-			auto pFullName = dynamic_cast<TESFullName*>(actorBase);
+			auto pFullName = DYNAMIC_CAST(actorBase, TESActorBase, TESFullName);
 			if (pFullName)
 				result = pFullName->GetName();
 		}
@@ -214,7 +214,7 @@ void GetCameraAngle(NiPoint3* pos)
 
 	if (IsCameraFirstPerson())
 	{
-		auto fps = dynamic_cast<TES::FirstPersonState*>(camera->cameraState);
+		auto fps = reinterpret_cast<TES::FirstPersonState*>(camera->cameraState);
 		NiPoint3 angle;
 		ComputeAnglesFromMatrix(&fps->cameraNode->m_worldTransform.rot, &angle);
 		z = NormalAbsoluteAngle(-angle.z);
@@ -223,7 +223,7 @@ void GetCameraAngle(NiPoint3* pos)
 	}
 	else if (IsCameraThirdPerson())
 	{
-		const auto tps = dynamic_cast<TES::ThirdPersonState*>(camera->cameraState);
+		const auto tps = reinterpret_cast<TES::ThirdPersonState*>(camera->cameraState);
 		z = player->rot.z + tps->diffRotZ;
 		x = player->rot.x + tps->diffRotX;
 		y = 0;
@@ -292,7 +292,7 @@ bool GetTargetPos(TESObjectREFR* target, NiPoint3* pos)
 
 	if (target->formType == kFormType_Character)
 	{
-		if (!GetTorsoPos(dynamic_cast<Actor*>(target), pos))
+		if (!GetTorsoPos(DYNAMIC_CAST(target, TESObjectREFR, Actor), pos))
 			target->GetMarkerPosition(pos);
 	}
 	else
@@ -333,5 +333,5 @@ bool IsPlayerTeammate(Actor* actor)
 
 bool IsPlayerFollower(Actor* actor)
 {
-	return Actor_IsInFaction(actor, dynamic_cast<TESFaction*>(LookupFormByID(0x05C84E))); // Follower Faction
+	return Actor_IsInFaction(actor, DYNAMIC_CAST(LookupFormByID(0x05C84E), TESForm, TESFaction)); // Follower Faction
 }

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../skse64/PapyrusNativeFunctions.h"
+
 namespace Papyrus
 {
-	void Init();
+	bool Init(VMClassRegistry * registry);
 }

@@ -56,5 +56,6 @@
     </ClCompile>
     <ClCompile Include="Address.cpp" />
     <ClCompile Include="Hooks.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

@@ -153,6 +153,7 @@
     <ClCompile Include="Address.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="Hooks.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Scaleform.cpp" />
     <ClCompile Include="Papyrus.cpp" />
     <ClCompile Include="TES\TESCameraController.cpp" />
