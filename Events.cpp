@@ -67,7 +67,7 @@ public:
 			auto * quest = GetLockOnQuest();
 			if (quest && EventLib::TESQuest_IsRunning(quest))
 			{
-				const uint64_t handle = EventLib::GetVMHandleForQuest(quest, 1);
+				const uint64_t handle = EventLib::GetVMHandleForQuest(quest, true, 1);
 				if (handle)
 				{
 					static BSFixedString eventName("Lockon_OnCombatStart");
@@ -121,7 +121,7 @@ public:
 				}
 			}
 
-			const uint64_t handle = EventLib::GetVMHandleForQuest(quest, 1);
+			const uint64_t handle = EventLib::GetVMHandleForQuest(quest, true, 1);
 			if (handle)
 			{
 				static BSFixedString eventName("Lockon_OnPlayerHit");
@@ -137,6 +137,8 @@ static void OnThumbstickEvent(TES::ThumbstickEvent * evt, TESQuest * quest)
 {
 	static bool bThumbstickLeft = false;
 	static bool bThumbstickRight = false;
+
+	_MESSAGE("x %f y %f", evt->x, evt->y);
 
 	bool  bTrigger = false;
 	const bool bState = (evt->x != 0 || evt->y != 0);
@@ -167,9 +169,10 @@ static void OnThumbstickEvent(TES::ThumbstickEvent * evt, TESQuest * quest)
 	if (bTrigger)
 	{
 		const uint64_t handle = EventLib::GetVMHandleForQuest(quest);
+
 		if (handle)
 		{
-			static BSFixedString eventName = "Lockon_OnThumbstick";
+			static BSFixedString eventName("Lockon_OnThumbstick");
 			EventLib::EventFunctor3<UInt32, float, float>(eventName, evt->keyMask, evt->x, evt->y)(handle);
 		}
 	}
@@ -180,13 +183,13 @@ static void OnMouseMoveEvent(TES::MouseMoveEvent * evt, TESQuest * quest)
 	static bool   bMoving = false;
 	static SInt32 totalX = 0;
 	static SInt32 totalY = 0;
-
+	
 	if (evt->source != evt->kInputType_Mouse)
 		return;
 
 	bool  bTrigger = false;
 	const bool  bState = (evt->moveX != 0 || evt->moveY != 0);
-	_DMESSAGE("MouseMove: %08X %08X %08X", evt->source, evt->moveX, evt->moveY);
+	//_DMESSAGE("MouseMove: %08X %08X %08X", evt->source, evt->moveX, evt->moveY);
 
 	totalX += evt->moveX;
 	totalY += evt->moveY;

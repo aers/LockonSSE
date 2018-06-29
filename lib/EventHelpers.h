@@ -15,7 +15,7 @@ namespace EventLib
 		return (quest->unk0D8.flags & 1) != 0 && (quest->unk0D8.flags >> 7 & 1) == 0 && quest->unk148 == 0;
 	}
 
-	inline UInt64 GetVMHandleForQuest(TESQuest* quest, uint64_t aliasIndex = 0)
+	inline UInt64 GetVMHandleForQuest(TESQuest* quest, bool isAlias = false, uint64_t aliasIndex = 0)
 	{
 		_DMESSAGE("[DEBUG] GetVMHandleForQuest(TESQuest ptr 0x%016" PRIXPTR ")", quest);
 
@@ -27,17 +27,27 @@ namespace EventLib
 		{
 			_DMESSAGE("[DEBUG] Quest exists and is running");
 
-			BGSBaseAlias* baseAlias = nullptr;
-			if (quest->aliases.GetNthItem(aliasIndex, baseAlias))
+			if (isAlias)
 			{
-				const auto refAlias = DYNAMIC_CAST(baseAlias, BGSBaseAlias, BGSRefAlias);
-				if (refAlias)
+				_DMESSAGE("[DEBUG] using refAlias %u", aliasIndex);
+				BGSBaseAlias* baseAlias = nullptr;
+				if (quest->aliases.GetNthItem(aliasIndex, baseAlias))
 				{
-					IObjectHandlePolicy* policy = registry->GetHandlePolicy();
-					handle = policy->Create(refAlias->kTypeID, refAlias);
+					const auto refAlias = DYNAMIC_CAST(baseAlias, BGSBaseAlias, BGSRefAlias);
+					if (refAlias)
+					{
+						IObjectHandlePolicy* policy = registry->GetHandlePolicy();
+						handle = policy->Create(refAlias->kTypeID, refAlias);
 
-					_DMESSAGE("[DEBUG] Quest handle is %d", handle);
+						_DMESSAGE("[DEBUG] quest alias handle is %u", handle);
+					}
 				}
+			}
+			else
+			{
+				IObjectHandlePolicy* policy = registry->GetHandlePolicy();
+				handle = policy->Create(quest->kTypeID, quest);
+				_DMESSAGE("[DEBUG] quest handle is %u", handle);
 			}
 		}
 

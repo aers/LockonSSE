@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <None Include="exports.def" />
-    <None Include="LockonSSE.ini" />
     <None Include="README.md" />
     <None Include="lib\EventFunctors.inl">
       <Filter>lib</Filter>

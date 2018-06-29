@@ -123,7 +123,6 @@
     <None Include="exports.def" />
     <None Include="lib\EventFunctors.inl" />
     <None Include="lib\EventFunctors_Base.inl" />
-    <None Include="LockonSSE.ini" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

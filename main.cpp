@@ -42,7 +42,11 @@ extern "C" {
 	{
 		gLog.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\LockOnSSE.log");
 		gLog.SetPrintLevel(IDebugLog::kLevel_Error);
+#ifdef _DEBUG
 		gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
+#else
+		gLog.SetLogLevel(IDebugLog::kLevel_Message);
+#endif	
 
 		_MESSAGE("LockOn SSE");
 
@@ -76,19 +80,19 @@ extern "C" {
 			return false;
 		}
 
-		g_messaging = (SKSEMessagingInterface *)skse->QueryInterface(kInterface_Messaging);
+		g_messaging = static_cast<SKSEMessagingInterface *>(skse->QueryInterface(kInterface_Messaging));
 		if (!g_messaging) {
 			_FATALERROR("couldn't get messaging interface");
 		}
 
-		g_scaleform = (SKSEScaleformInterface *)skse->QueryInterface(kInterface_Scaleform);
+		g_scaleform = static_cast<SKSEScaleformInterface *>(skse->QueryInterface(kInterface_Scaleform));
 		if (!g_scaleform)
 		{
 			_FATALERROR("couldn't get scaleform interface");
 			return false;
 		}
 
-		g_papyrus = (SKSEPapyrusInterface *)skse->QueryInterface(kInterface_Papyrus);
+		g_papyrus = static_cast<SKSEPapyrusInterface *>(skse->QueryInterface(kInterface_Papyrus));
 		if (!g_papyrus)
 		{
 			_FATALERROR("couldn't get papyrus interface");

@@ -184,6 +184,7 @@ void SendLockonEvent(Actor * actor, const char * eventName)
 {
 	BGSListForm * list = GetQuestList();
 
+	_DMESSAGE("send lockon event");
 	if (list && list->forms.count)
 	{
 		for (UInt32 i = 0; i < list->forms.count; i++)
@@ -204,8 +205,10 @@ void SendLockonEvent(Actor * actor, const char * eventName)
 
 void Papyrus_SendLockonStartEvent(TESQuest * thisPtr)
 {
+	_DMESSAGE("sendlockonstartevent");
 	if (thisPtr && EventLib::TESQuest_IsRunning(thisPtr))
 	{
+		_DMESSAGE("quest running");
 		UInt32 handle = *g_invalidRefHandle;
 		TESObjectREFR* refTarget = nullptr;
 

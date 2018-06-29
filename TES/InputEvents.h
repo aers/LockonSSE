@@ -14,10 +14,10 @@ namespace TES
 
 		enum { kInputType_Mouse = 0x0A };
 								// 0x18, controlID from IDEvent
-		uint32_t source;		// 0x20, init 0x0A
+		UInt32 source;		// 0x20, init 0x0A
 		uint32_t pad24;			// 0x24, pad
-		int32_t  moveX;			// 0x28
-		int32_t  moveY;			// 0x2C
+		SInt32  moveX;			// 0x28
+		SInt32  moveY;			// 0x2C
 	};
 
 	// 30
@@ -43,7 +43,7 @@ namespace TES
 		}
 
 		// 18 -> controlID from IDEvent
-		uint32_t keyMask;	// 20 - b for left stick, c for right stick
+		UInt32 keyMask;	// 20 - b for left stick, c for right stick
 		uint32_t pad24;     // 24
 		float	 x;			// 28
 		float	 y;			// 2C
