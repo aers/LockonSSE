@@ -138,7 +138,7 @@ static void OnThumbstickEvent(TES::ThumbstickEvent * evt, TESQuest * quest)
 	static bool bThumbstickLeft = false;
 	static bool bThumbstickRight = false;
 
-	_MESSAGE("x %f y %f", evt->x, evt->y);
+	_DMESSAGE("x %f y %f", evt->x, evt->y);
 
 	bool  bTrigger = false;
 	const bool bState = (evt->x != 0 || evt->y != 0);
