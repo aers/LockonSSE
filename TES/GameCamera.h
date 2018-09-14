@@ -6,7 +6,7 @@
 
 namespace TES
 {
-	// 1.5.39 ptr 1E16A10
+	// 1.5.50 ptr 1E16A10
 	class TESCameraController
 	{
 	public:
@@ -138,6 +138,6 @@ namespace TES
 		UInt8	pad166[2];									// 166
 
 		MEMBER_FN_PREFIX(PlayerCamera);
-		DEFINE_MEMBER_FN(UpdateThirdPerson, void, 0x0084DAE0, bool weaponDrawn);
+		DEFINE_MEMBER_FN(UpdateThirdPerson, void, 0x0084D820, bool weaponDrawn);
 	};
 }

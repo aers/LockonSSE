@@ -64,7 +64,7 @@ private:
 	T * pointer;
 };
 
-#define ADDR_LookupSharedPtrByHandle			0x00132B50
+#define ADDR_LookupSharedPtrByHandle			0x00132BC0
 
 template<class T>
 bool LookupSharedPtrByHandle(UInt32 handle, SharedPtr<T>* mp)

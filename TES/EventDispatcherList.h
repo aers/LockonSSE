@@ -67,5 +67,5 @@ namespace TES
 
 	typedef EventDispatcherList*(*_GetEventDispatcherList)();
 	// 614D2151B14D0D61E7DA7088CAB85DB111E2E0D3+1B
-	RelocAddr<_GetEventDispatcherList> GetEventDispatcherList(0x00186910);
+	RelocAddr<_GetEventDispatcherList> GetEventDispatcherList(0x00186980);
 }

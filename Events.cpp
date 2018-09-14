@@ -189,7 +189,7 @@ static void OnMouseMoveEvent(TES::MouseMoveEvent * evt, TESQuest * quest)
 
 	bool  bTrigger = false;
 	const bool  bState = (evt->moveX != 0 || evt->moveY != 0);
-	//_DMESSAGE("MouseMove: %08X %08X %08X", evt->source, evt->moveX, evt->moveY);
+	_DMESSAGE("MouseMove: %08X %08X %08X", evt->source, evt->moveX, evt->moveY);
 
 	totalX += evt->moveX;
 	totalY += evt->moveY;
