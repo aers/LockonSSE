@@ -22,7 +22,7 @@ RelocAddr<_PlayerCharacter_SetAngleZ> PlayerCharacter_SetAngleZ(0x005D11B0);
 RelocAddr<_PlayerCharacter_SetAngleX> PlayerCharacter_SetAngleX(0x005EDF40);
 
 // ??_7PlayerCharacter@@6B@ + 0x520 (vtbl A4)
-RelocAddr<_PlayerCharacter_UnkA4> PlayerCharacter_UnkA4(0x006A56D0);
+RelocAddr<_PlayerCharacter_UnkA4> PlayerCharacter_UnkA4(0x006A5410);
 
 // E8 ? ? ? ? 33 D2 48 8B CF E8 ? ? ? ? 48 8B D8 
 RelocAddr<uintptr_t> OnCameraMoveHook(0x0069EB90);
