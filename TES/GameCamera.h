@@ -96,7 +96,7 @@ namespace TES
 		static PlayerCamera *	GetSingleton(void)
 		{
 			// C8178119312C87C7B80275C5FECC5A3BF755A64B+B9
-			static RelocPtr<PlayerCamera*> g_playerCamera(0x02EEC9B8);
+			static RelocPtr<PlayerCamera*> g_playerCamera(0x02EC59B8);
 			return *g_playerCamera;
 		}
 
@@ -138,6 +138,6 @@ namespace TES
 		UInt8	pad166[2];									// 166
 
 		MEMBER_FN_PREFIX(PlayerCamera);
-		DEFINE_MEMBER_FN(UpdateThirdPerson, void, 0x0084D820, bool weaponDrawn);
+		DEFINE_MEMBER_FN(UpdateThirdPerson, void, 0x0084D630, bool weaponDrawn);
 	};
 }

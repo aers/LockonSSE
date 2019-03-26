@@ -66,7 +66,7 @@ TESQuest* GetLockOnQuest()
 	if (formID == 0)
 	{
 		DataHandler* dhdl = DataHandler::GetSingleton();
-		const uint32_t idx = dhdl->GetLoadedModIndex(pluginName.c_str());
+		const uint32_t idx = dhdl->LookupModByName(pluginName.c_str())->GetPartialIndex();
 		if (idx != 0xFF)
 		{
 			formID = (idx << 24) | lockonQuestFormID;
@@ -91,7 +91,7 @@ BGSListForm* GetQuestList()
 	if (formIDQuestList == 0)
 	{
 		DataHandler* dhdl = DataHandler::GetSingleton();
-		const uint32_t idx = dhdl->GetLoadedModIndex(pluginName.c_str());
+		const uint32_t idx = dhdl->LookupModByName(pluginName.c_str())->GetPartialIndex();
 		if (idx != 0xFF)
 		{
 			formIDQuestList = (idx << 24) | questListFormID;
@@ -308,7 +308,7 @@ bool GetTargetPos(TESObjectREFR* target, NiPoint3* pos)
 
 Actor* GetCombatTarget(Actor* actor)
 {
-	TESObjectREFR * ref = nullptr;
+	NiPointer<TESObjectREFR> ref = nullptr;
 	UInt32 handle;
 
 	if (actor->IsInCombat())
@@ -318,7 +318,7 @@ Actor* GetCombatTarget(Actor* actor)
 		if (handle == *g_invalidRefHandle || handle == 0)
 			return nullptr;
 
-		LookupREFRByHandle(&handle, &ref);
+		LookupREFRByHandle(handle, ref);
 	}
 
 	return DYNAMIC_CAST(ref, TESObjectREFR, Actor);

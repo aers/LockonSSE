@@ -29,7 +29,7 @@ template <>
 struct _SharedPtrInternal<TESObjectREFR>
 {
 	static void IncRef(TESObjectREFR* p) { p->handleRefObject.IncRef(); }
-	static void DecRef(TESObjectREFR* p) { p->handleRefObject.DecRefHandle(); }
+	static void DecRef(TESObjectREFR* p) { p->handleRefObject.DecRef(); }
 };
 
 
@@ -64,7 +64,7 @@ private:
 	T * pointer;
 };
 
-#define ADDR_LookupSharedPtrByHandle			0x00132BC0
+
 
 template<class T>
 bool LookupSharedPtrByHandle(UInt32 handle, SharedPtr<T>* mp)

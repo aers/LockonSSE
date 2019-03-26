@@ -75,11 +75,11 @@ TESObjectREFR* Papyrus_GetCrosshairReference(StaticFunctionTag * base)
 {
 	CrosshairRefHandleHolder* crh = CrosshairRefHandleHolder::GetSingleton();
 	UInt32 handle = crh->CrosshairRefHandle();
-	TESObjectREFR* akRef = nullptr;
+	NiPointer<TESObjectREFR> akRef = nullptr;
 
 	if (handle != *g_invalidRefHandle)
 	{
-		LookupREFRByHandle(&handle, &akRef);
+		LookupREFRByHandle(handle, akRef);
 	}
 
 	return akRef;
@@ -114,9 +114,9 @@ VMResultArray<Actor*> Papyrus_FindCloseActor(TESQuest * thisPtr, float distance,
 	size_t i = 0;
 	while (actorHandles->GetNthItem(i++, handle))
 	{
-		TESObjectREFR* ref = nullptr;
+		NiPointer<TESObjectREFR> ref = nullptr;
 		if (handle != *g_invalidRefHandle)
-			LookupREFRByHandle(&handle, &ref);
+			LookupREFRByHandle(handle, ref);
 
 		if (ref && ref->formType == kFormType_Character)
 		{
@@ -210,12 +210,12 @@ void Papyrus_SendLockonStartEvent(TESQuest * thisPtr)
 	{
 		_DMESSAGE("quest running");
 		UInt32 handle = *g_invalidRefHandle;
-		TESObjectREFR* refTarget = nullptr;
+		NiPointer<TESObjectREFR> refTarget = nullptr;
 
 		TESQuest_CreateRefHandleByAliasID(thisPtr, &handle, 0);
 
 		if (handle != *g_invalidRefHandle)
-			LookupREFRByHandle(&handle, &refTarget);
+			LookupREFRByHandle(handle, refTarget);
 
 		if (refTarget && refTarget->formType == kFormType_Character)
 		{
@@ -229,12 +229,12 @@ void Papyrus_SendLockonStopEvent(TESQuest * thisPtr)
 	if (thisPtr && EventLib::TESQuest_IsRunning(thisPtr))
 	{
 		UInt32 handle = *g_invalidRefHandle;
-		TESObjectREFR* refTarget = nullptr;
+		NiPointer<TESObjectREFR> refTarget = nullptr;
 
 		TESQuest_CreateRefHandleByAliasID(thisPtr, &handle, 0);
 
 		if (handle != *g_invalidRefHandle)
-			LookupREFRByHandle(&handle, &refTarget);
+			LookupREFRByHandle(handle, refTarget);
 
 		if (refTarget && refTarget->formType == kFormType_Character)
 		{

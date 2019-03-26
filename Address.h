@@ -30,3 +30,5 @@ typedef float(*_PlayerCharacter_UnkA4)(PlayerCharacter * thisPtr, UInt32 arg1);
 extern RelocAddr<_PlayerCharacter_UnkA4> PlayerCharacter_UnkA4;
 
 extern RelocAddr<uintptr_t> OnCameraMoveHook;
+
+#define ADDR_LookupSharedPtrByHandle			0x001329D0
